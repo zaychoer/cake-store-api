@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/app.dockerfile
+    ports:
+      - 8080:8080
+    container_name: cake-store
+    volumes:
+      - ./:/cake-store
+    depends_on:
+      - database
+    environment:
+      - 'DB_PORT=3306'
+      - 'DB_HOST=database'
+
+  database:
+    build:
+      context: .
+      dockerfile: ./docker/db.dockerfile
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: cake-store
+    container_name: cake-store-db
+    ports:
+      - 3306:3306
+    volumes:
+      - cake-store-data:/var/lib/mysql
+
+volumes:
+  cake-store-data:
